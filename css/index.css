@@ -1,0 +1,33 @@
+body, html { margin: 0; padding: 0; overflow: hidden; height: 100%; width: 100%; }
+.btn { cursor: pointer; padding: 5px 12px; border: 1px solid #ddd; border-radius: 3px; }
+.layout { background: #f5f7f9; position: relative; overflow: hidden; }
+.layout-header-bar { box-shadow: 0 1px 1px rgba(0, 0, 0, .1); }
+.layout-logo { width: 50px; height: 30px; /*background: #5b6270; border-radius: 3px;*/ float: left; position: relative; top: 0; left: 0px; }
+.layout-nav { width: 500px; margin: 0 auto; position: absolute; right: 25px; top: 0; }
+.ivu-layout-header { z-index: 99; padding-left: 0px; }
+.ivu-tabs, .ivu-tabs-content, .ivu-tabs-tabpane { height: 100% !important; }
+.ivu-tabs-bar { margin-bottom: 0; }
+.ivu-menu-horizontal, .ivu-layout-header, .ivu-menu-horizontal { line-height: 50px; height: 50px; }
+.layout-logo-left { width: 90%; height: 30px; background: #5b6270; border-radius: 3px; margin: 15px auto; }
+.menu-icon { transition: all .3s; }
+.rotate-icon { transform: rotate(-90deg); display: inline-block; }
+.menu-item span { display: inline-block; overflow: hidden; width: 95px; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; transition: width .2s ease .2s; }
+.menu-item i { transform: translateX(0px); transition: font-size .2s ease, transform .2s ease; vertical-align: middle; font-size: 16px; }
+.collapsed-menu span { width: 0px; transition: width .2s ease; }
+.collapsed-menu i { transform: translateX(5px); transition: font-size .2s ease .2s, transform .2s ease .2s; vertical-align: middle; font-size: 22px; }
+.menu-toggle { color: #fff; cursor: pointer; }
+    .menu-toggle:hover { color: #2d8cf0; }
+.sider-logo-text { display: inline-block; transition: width .2s ease .2s; margin-left: 15px; font-size: 20px; }
+.sider-logo { color: #fff; font-size: 18px; font-weight: 600; padding-top: 15px; padding-bottom: 10px; padding-left: 10px; line-height: 30px; vertical-align: middle; }
+.ivu-layout-sider-collapsed .sider-logo .sider-logo-text { white-space: nowrap; display: none; width: 0 !important; overflow: hidden; transition: width .2s ease; }
+.sider-logo-icon { width: 0; display: inline-block; overflow: hidden; transition: all .3s; font-size: 16px; }
+.ivu-layout-sider-collapsed .sider-logo-icon { margin-left: 18px; transition: all .3s; font-size: 24px; width: 24px; }
+.ivu-layout-sider-collapsed .ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item { padding-left: 5px; }
+.ivu-layout-sider-collapsed .ivu-menu-submenu-title-icon { display: none; }
+.ivu-menu { position: relative; }
+.ivu-tabs.ivu-tabs-card{}
+.ivu-menu-item:hover { background-color: rgba(255, 255, 255, 0.1);}
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title { color: rgba(255,255,255,.7); }
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item:hover, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title:hover { color: rgba(255,255,255,.7); }
+.ivu-menu-submenu-title span > i, .ivu-menu-submenu-title > i{ margin-right: 1px;}
+.ivu-layout-sider-collapsed .ivu-menu-vertical .ivu-menu-item, .ivu-layout-sider-collapsed .ivu-menu-vertical .ivu-menu-submenu-title { padding: 18px 24px; }
