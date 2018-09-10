@@ -75,16 +75,26 @@
                         </i-menu>
                     </i-header>
                     <i-content :style="mainContentHeight">
-                        <tabs closable v-show="tabs.length>0" :value="menuState.activeTabName" :animated="true"
-                            @on-click="handleTabClicked" @on-tab-remove="handleTabRemoved">
-                            <Dropdown style="margin-left: 20px" placement="bottom-end" slot="extra" @on-click="handleTabDropdownClick">
+                        <tabs :type="tab.type" closable v-show="tabs.length>0" :value="menuState.activeTabName"
+                            :animated="true" @on-click="handleTabClicked" @on-tab-remove="handleTabRemoved">
+                            <Dropdown style="margin-left: 20px" placement="bottom-end" transfer="true" slot="extra"
+                                @on-click="handleTabDropdownClick">
                                 <i-button type="text" style="height:30px;">
                                     <Icon type="ios-arrow-down"></Icon>
                                 </i-button>
                                 <dropdown-menu slot="list">
-                                    <dropdown-item name="close-all">关闭全部</dropdown-item>
-                                    <dropdown-item name="close-current">关闭当前</dropdown-item>
-                                    <dropdown-item name="close-others">关闭其他</dropdown-item>
+                                    <dropdown-item name="close-all">
+                                        <Icon type="md-close"></Icon> 关闭全部
+                                    </dropdown-item>
+                                    <dropdown-item name="close-current">
+                                        <Icon type="ios-arrow-forward"></Icon> 关闭当前
+                                    </dropdown-item>
+                                    <dropdown-item name="close-others">
+                                        <Icon type="md-arrow-forward"></Icon> 关闭其他
+                                    </dropdown-item>
+                                    <dropdown-item name="switch-tab-type" divided>
+                                        <Icon type="md-swap"></Icon> 切换模式
+                                    </dropdown-item>
                                 </dropdown-menu>
                             </Dropdown>
                             <tab-pane v-for="(tab,index) in tabs" :key="tab" :label="tab.label" :icon="tab.icon" :name="tab.name"
@@ -111,6 +121,9 @@
                 menuState: {
                     activeTabName: "",
                     openMenus: []
+                },
+                tab: {
+                    type: "line" //可选值:line,card
                 },
                 isCollapsed: false,
                 menu: [
@@ -215,7 +228,6 @@
                     this.doRemoveTab(index);
                 },
                 handleResize: function () {
-                    console.log("resized.");
                     this.calcFrameHeight();
                 },
                 handleTabDropdownClick: function (name) {
@@ -229,18 +241,22 @@
                         case "close-others":
                             this.doCloseTabOthers();
                             break;
+                        case "switch-tab-type":
+                            this.handleSwitchTabType();
+                            break;
                     }
                 },
                 doRemoveTab: function (index) {
+                    var tab = this.tabs[index];
+                    if (!tab.closable) {
+                        return;
+                    }
                     this.tabs.splice(index, 1);
                 },
                 doCloseTabAll: function () {
-                    console.log("close all clicked.");
                     for (var i = this.tabs.length - 1; i >= 0; i--) {
                         var tab = this.tabs[i];
-                        console.log("close all each item:", JSON.stringify(tab));
                         if (tab.closable) {
-                            console.log("doCloseTabAll: ", JSON.stringify(this.tabs[i]));
                             this.doRemoveTab(i);
                         }
                     }
@@ -266,6 +282,9 @@
                         target.handleTabClicked(target.menuState.activeTabName);
                     }, 100);
 
+                },
+                handleSwitchTabType: function () {
+                    this.tab.type = this.tab.type === "line" ? "card" : "line";
                 }
             }
         });
