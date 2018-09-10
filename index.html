@@ -22,7 +22,7 @@
                         <span class="sider-logo-text">后台管理系统</span>
                         <Icon class="sider-logo-icon" type="md-home" size="24"></Icon>
                     </div>
-                    <i-menu ref="myMenu" :active-name="menuState.activeTabName" theme="dark" width="auto" :open-names="menuState.openNames"
+                    <i-menu ref="myMenu" :active-name="currentTab.name" theme="dark" width="auto" :open-names="menuState.openNames"
                         accordion :class="menuitemClasses">
                         <template v-for="submenu in menu" :key="submenu.name">
                             <submenu :name="submenu.name">
@@ -75,8 +75,8 @@
                         </i-menu>
                     </i-header>
                     <i-content :style="mainContentHeight">
-                        <tabs :type="tab.type" closable v-show="tabs.length>0" :value="menuState.activeTabName"
-                            :animated="true" @on-click="handleTabClicked" @on-tab-remove="handleTabRemoved">
+                        <tabs :type="tab.type" closable v-show="tabs.length>0" :value="currentTab.name" :animated="true"
+                            @on-click="handleTabClicked" @on-tab-remove="handleTabRemoved">
                             <Dropdown style="margin-left: 20px" placement="bottom-end" transfer="true" slot="extra"
                                 @on-click="handleTabDropdownClick">
                                 <i-button type="text" style="height:30px;">
@@ -119,11 +119,15 @@
                 windowHeight: 0,
                 frameHeight: 0,
                 menuState: {
-                    activeTabName: "",
                     openMenus: []
                 },
                 tab: {
                     type: "line" //可选值:line,card
+                },
+                currentTab: {
+                    index: 0,
+                    name: "",
+                    closable: true
                 },
                 isCollapsed: false,
                 menu: [
@@ -186,12 +190,22 @@
                     this.windowHeight = (document.documentElement.scrollHeight || document.body.scrollHeight);
                     this.frameHeight = this.windowHeight - 95;
                 },
+                setCurrentTab: function (name) {
+                    var tab = this.getTab(name);
+                    var tabIndex = this.getTabIndex(name);
+                    if (tab) {
+                        //this.currentTab = { index: tabIndex, name: name, closable: tab.closable };
+                        this.currentTab.index = tabIndex;
+                        this.currentTab.name = tab.name;
+                        this.currentTab.closable = tab.closable;
+                    }
+                },
                 handleMenuClick(menu) {
-                    this.menuState.activeTabName = menu.name;
+                    var tab = { label: menu.label, href: menu.href, icon: menu.icon, name: menu.name, closable: menu.closable };
                     if (this.tabs.map(x => x.name).indexOf(menu.name) === -1) {
-                        var tab = { label: menu.label, href: menu.href, icon: menu.icon, name: menu.name, closable: menu.closable };
                         this.tabs.push(tab);
                     }
+                    this.setCurrentTab(tab.name);
                 },
                 handleMenuSelected(name) {
                     var menu = this.menu.menuItem;
@@ -216,7 +230,7 @@
                     return -1;
                 },
                 handleTabClicked: function (name) {
-                    this.menuState.activeTabName = name;
+                    this.setCurrentTab(name);
                     var openNames = name.split("-")[0] + "";
                     this.menuState.openNames = [openNames];
                     this.$nextTick(function () {
@@ -260,31 +274,79 @@
                             this.doRemoveTab(i);
                         }
                     }
-                    this.resetActiveTab();
+                    if (this.currentTab.closable) {
+                        var index = this.tabs.length - 1;
+                        this.currentTab.index = index;
+                        this.currentTab.name = this.tabs[index].name;
+                        this.currentTab.closable = this.tabs[index].closable;
+                    }
+                    var target = this;
+                    setTimeout(function () {
+                        target.resetActiveTab();
+                    }, 50);
                 },
                 doCloseTabCurrent: function () {
-                    this.handleTabRemoved(this.menuState.activeTabName);
-                    this.resetActiveTab();
+                    this.handleTabRemoved(this.currentTab.name);
+                    var index = this.currentTab.index - 1;
+                    if (index < 0) {
+                        index = 0;
+                    }
+                    this.currentTab.index = index;
+                    this.currentTab.name = this.tabs[index].name;
+                    this.currentTab.closable = this.tabs[index].closable;
+                    var target = this;
+                    setTimeout(function () {
+                        target.resetActiveTab();
+                    }, 50);
                 },
                 doCloseTabOthers: function () {
+                    var previousRemoveCount = 0;
+                    var count = true;
                     for (var i = this.tabs.length - 1; i >= 0; i--) {
                         var tab = this.tabs[i];
-                        if (tab.closable && tab.name != this.menuState.activeTabName) {
+                        if (tab.closable && tab.name != this.currentTab.name) {
                             this.doRemoveTab(i);
                         }
+                        if (tab.closable && count) {
+                            previousRemoveCount++;
+                            if (tab.name == this.currentTab.name) {
+                                count = false;
+                            }
+                        }
                     }
-                    this.resetActiveTab();
+                    console.log("count,previousRemoveCount: ", count, previousRemoveCount);
+
+                    if (previousRemoveCount > 0) {
+                        this.currentTab.index = this.getTabIndex(this.currentTab.name);
+                    }
+                    console.log("current tab:", JSON.stringify(this.currentTab));
                 },
                 resetActiveTab: function () {
                     var target = this;
                     setTimeout(function () {
-                        target.menuState.activeTabName = target.tabs[target.tabs.length - 1].name;
-                        target.handleTabClicked(target.menuState.activeTabName);
+                        var name = target.currentTab.name;
+                        target.setCurrentTab(name);
+                        target.handleTabClicked(name);
                     }, 100);
 
                 },
                 handleSwitchTabType: function () {
                     this.tab.type = this.tab.type === "line" ? "card" : "line";
+                },
+                findNextTabIndex: function () {
+                    var index = this.currentTab.index - 1;
+                    if (index < 0) {
+                        index = 0;
+                    }
+                    return index;
+                },
+                findNextTabName: function () {
+                    var index = this.findNextTabIndex();
+                    return this.tabs[index].name;
+                },
+                findNextTab: function () {
+                    var index = this.findNextTabIndex();
+                    return this.tabs[index];
                 }
             }
         });
