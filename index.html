@@ -75,11 +75,10 @@
                         </i-menu>
                     </i-header>
                     <i-content :style="mainContentHeight">
-                        <tabs type="card" closable v-show="tabs.length>0" :value="menuState.activeTabName" :animated="true"
+                        <tabs closable v-show="tabs.length>0" :value="menuState.activeTabName" :animated="true"
                             @on-click="handleTabClicked" @on-tab-remove="handleTabRemoved">
                             <Dropdown style="margin-left: 20px" placement="bottom-end" slot="extra" @on-click="handleTabDropdownClick">
                                 <i-button type="text" style="height:30px;">
-                                    下拉菜单
                                     <Icon type="ios-arrow-down"></Icon>
                                 </i-button>
                                 <dropdown-menu slot="list">
@@ -237,7 +236,7 @@
                 },
                 doCloseTabAll: function () {
                     console.log("close all clicked.");
-                    for (var i = 0; i < this.tabs.length; i++) {
+                    for (var i = this.tabs.length - 1; i >= 0; i--) {
                         var tab = this.tabs[i];
                         console.log("close all each item:", JSON.stringify(tab));
                         if (tab.closable) {
@@ -248,13 +247,13 @@
                     this.resetActiveTab();
                 },
                 doCloseTabCurrent: function () {
-                    this.handleTabRemoved(this.activeTabName);
+                    this.handleTabRemoved(this.menuState.activeTabName);
                     this.resetActiveTab();
                 },
                 doCloseTabOthers: function () {
-                    for (var i = 0; i < this.tabs.length; i++) {
+                    for (var i = this.tabs.length - 1; i >= 0; i--) {
                         var tab = this.tabs[i];
-                        if (tab.closable && tab.name != this.activeTabName) {
+                        if (tab.closable && tab.name != this.menuState.activeTabName) {
                             this.doRemoveTab(i);
                         }
                     }
@@ -262,11 +261,11 @@
                 },
                 resetActiveTab: function () {
                     var target = this;
-                    setTimeout(function(){
-                        target.activeTabName = target.tabs[target.tabs.length - 1].name;
-                        target.handleTabClicked(target.activeTabName);
-                    },100);
-                    
+                    setTimeout(function () {
+                        target.menuState.activeTabName = target.tabs[target.tabs.length - 1].name;
+                        target.handleTabClicked(target.menuState.activeTabName);
+                    }, 100);
+
                 }
             }
         });
