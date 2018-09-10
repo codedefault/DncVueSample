@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>用户登录</title>
+    <link rel="stylesheet" type="text/css" href="../assets/iview/iview-3.1.0/styles/iview.css" />
+    <style type="text/css">
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .load-bar-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+        }
+
+        .load-bar {
+            position: relative;
+            margin-top: 0;
+            width: 100%;
+            height: 6px;
+            background-color: #fdba2c;
+            /*border-top-left-radius: 3px; border-top-right-radius: 3px;*/
+            display: block;
+        }
+
+        .bar {
+            content: "";
+            display: inline;
+            position: absolute;
+            width: 0;
+            height: 100%;
+            left: 50%;
+            text-align: center;
+            /*border-top-left-radius: 3px; border-top-right-radius: 3px;*/
+        }
+
+        .bar:nth-child(1) {
+            background-color: #da4733;
+            animation: loading 3s linear infinite;
+        }
+
+        .bar:nth-child(2) {
+            background-color: #3b78e7;
+            animation: loading 3s linear 1s infinite;
+        }
+
+        .bar:nth-child(3) {
+            background-color: #fdba2c;
+            animation: loading 3s linear 2s infinite;
+        }
+
+        @keyframes loading {
+            from {
+                left: 50%;
+                width: 0;
+                z-index: 100;
+            }
+
+            33.3333% {
+                left: 0;
+                width: 100%;
+                z-index: 10;
+            }
+
+            to {
+                left: 0;
+                width: 100%;
+            }
+        }
+
+        .account-container {
+            position: absolute;
+            margin: auto;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 400px;
+            height: 450px;
+            background-color: #fff;
+            /*border-radius: 3px;*/
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .account-signin-container {
+            margin-top: 15px;
+        }
+
+        .account-signin-container h1 {
+            font-size: 20px;
+            border-bottom: 2px solid #f7f7f7;
+            margin: 0 0 15px;
+            padding-bottom: 10px;
+            padding-left: 15px;
+            letter-spacing: 0.1em;
+        }
+
+        .account-modal-container .modal {
+            background: rgba(211, 211, 211, 0.10);
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            display: none;
+        }
+
+        .account-form {
+            padding: 15px;
+        }
+
+        .account-form .form-group {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .account-form .form-group label {
+            width: 100%;
+            display: block;
+        }
+
+        .account-form .form-group input {
+            border: 1px solid #ccc;
+            line-height: 28px;
+            font-size: 16px;
+            padding: 2px 0px;
+            padding-left: 5px;
+            display: block;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .account-form #btn_login {
+            background: #3b78e7;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 8px 25px;
+            cursor: pointer;
+            margin-top: 15px;
+            display: inline-block;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .account-form #btn_login:hover {
+            background: #4885F3;
+        }
+
+        @media(max-width:500px) {
+            .account-container {
+                width: 100%;
+                height: 100vh;
+            }
+        }
+    </style>
+    <script src="../assets/vue/vue-2.5.17.min.js"></script>
+    <script src="../assets/iview/iview-3.1.0/iview.min.js"></script>
+</head>
+
+<body>
+    <div id="app" class="account-container">
+        <div class="account-modal-container">
+            <div class="modal"></div>
+            <div class="load-bar-container">
+                <div class="load-bar" v-show="loadingbar.show">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+            </div>
+            <div class="account-signin-container">
+                <h1>用户登录</h1>
+                <form class="account-form">
+                    <div class="form-group">
+                        <label>
+                            <span>登录名:</span>
+                            <input type="text" id="username" name="username" placeholder="请输入登录名" v-model="loginViewModel.username" />
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            密码:
+                            <input type="password" id="password" name="password" placeholder="请输入密码" v-model="loginViewModel.password" />
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <a id="btn_login" @click="handleLogin">登 录</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data: function () {
+                return {
+                    loadingbar: {
+                        show: false
+                    },
+                    loginViewModel: {
+                        userName: "admin",
+                        password: "123456"
+                    }
+                }
+            },
+            methods: {
+                handleLogin: function () {
+                    var target = this;
+                    target.doLogin();
+                    setTimeout(function () {
+                        target.completeLogin();
+                    }, 2000);
+                },
+                doLogin: function () {
+                    this.loadingbar.show = true;
+                },
+                completeLogin: function () {
+                    this.loadingbar.show = false;
+                    this.$Message.success("登录成功");
+                    //设置用户TOKEN于localStorage中,系统首页依据此TOKEN来验证是否已登录
+                    localStorage.setItem("dnc_token", "user_info");
+                    setTimeout(function () {
+                        window.location.href = "/index.html"
+                    }, 1000);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
