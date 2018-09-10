@@ -174,7 +174,6 @@
                 },
                 mainContentHeight() {
                     var docHeight = this.windowHeight - 65;
-                    //{ margin: '50px 2px 0', background: '#fff', height: '100%', minHeight: docHeight + 'px' }
                     return { margin: '50px 2px 0', background: '#fff', height: '100%', minHeight: docHeight + 15 + 'px' };
                 }
             },
@@ -199,7 +198,6 @@
                     var tab = this.getTab(name);
                     var tabIndex = this.getTabIndex(name);
                     if (tab) {
-                        //this.currentTab = { index: tabIndex, name: name, closable: tab.closable };
                         this.currentTab.index = tabIndex;
                         this.currentTab.name = tab.name;
                         this.currentTab.closable = tab.closable;
@@ -296,9 +294,11 @@
                     if (index < 0) {
                         index = 0;
                     }
-                    this.currentTab.index = index;
-                    this.currentTab.name = this.tabs[index].name;
-                    this.currentTab.closable = this.tabs[index].closable;
+                    if (this.currentTab.closable) {
+                        this.currentTab.index = index;
+                        this.currentTab.name = this.tabs[index].name;
+                        this.currentTab.closable = this.tabs[index].closable;
+                    }
                     var target = this;
                     setTimeout(function () {
                         target.resetActiveTab();
@@ -319,12 +319,9 @@
                             }
                         }
                     }
-                    console.log("count,previousRemoveCount: ", count, previousRemoveCount);
-
                     if (previousRemoveCount > 0) {
                         this.currentTab.index = this.getTabIndex(this.currentTab.name);
                     }
-                    console.log("current tab:", JSON.stringify(this.currentTab));
                 },
                 resetActiveTab: function () {
                     var target = this;
