@@ -17,13 +17,13 @@
     <div id="app">
         <div class="layout">
             <Layout>
-                <Sider ref="side1" hide-trigger collapsible :collapsed-width="78" v-model="isCollapsed">
+                <Sider ref="side1" hide-trigger collapsible :collapsed-width="80" v-model="isCollapsed">
                     <div class="sider-logo">
                         <span class="sider-logo-text">后台管理系统</span>
                         <Icon class="sider-logo-icon" type="md-home" size="24"></Icon>
                     </div>
-                    <i-menu ref="myMenu" :active-name="currentTab.name" theme="dark" width="auto" :open-names="menuState.openNames"
-                        accordion :class="menuitemClasses">
+                    <i-menu id="sider_menu" ref="myMenu" :active-name="currentTab.name" theme="dark" width="auto"
+                        :open-names="menuState.openNames" accordion :class="menuitemClasses" :style="{height:menuState.height+'px'}">
                         <template v-for="submenu in menu" :key="submenu.name">
                             <submenu :name="submenu.name">
                                 <template slot="title">
@@ -124,7 +124,8 @@
                 windowHeight: 0,
                 frameHeight: 0,
                 menuState: {
-                    openMenus: []
+                    openMenus: [],
+                    height: 300
                 },
                 tab: {
                     type: "line" //可选值:line,card
@@ -144,9 +145,21 @@
                         ]
                     },
                     {
-                        title: "基础资料", name: "2", icon: "logo-windows", menuItem: [
-                            { label: "系统设置", name: "2-1", href: "pages/basic/settings/index.html", icon: "logo-apple", closable: true },
-                            { label: "系统环境", name: "2-2", href: "pages/basic/settings/evn.html", icon: "logo-windows", closable: true }
+                        title: "系统管理", name: "2", icon: "logo-windows", menuItem: [
+                            { label: "权限管理", name: "2-1", href: "pages/basic/settings/index.html", icon: "logo-apple", closable: true },
+                            { label: "组织机构", name: "2-2", href: "pages/basic/settings/evn.html", icon: "logo-windows", closable: true },
+                            { label: "角色管理", name: "2-3", href: "pages/basic/settings/index.html", icon: "logo-apple", closable: true },
+                            { label: "基础设置", name: "2-4", href: "pages/basic/settings/evn.html", icon: "logo-windows", closable: true },
+                            { label: "指标类别", name: "2-5", href: "pages/basic/settings/index.html", icon: "logo-apple", closable: true },
+                            { label: "用户管理", name: "2-6", href: "pages/basic/settings/evn.html", icon: "logo-windows", closable: true },
+                            { label: "模块管理", name: "2-7", href: "pages/basic/settings/index.html", icon: "logo-apple", closable: true },
+                            { label: "人员导入", name: "2-8", href: "pages/basic/settings/evn.html", icon: "logo-windows", closable: true },
+                            { label: "流程申请", name: "2-9", href: "pages/basic/settings/index.html", icon: "logo-apple", closable: true },
+                            { label: "流程监管", name: "2-10", href: "pages/basic/settings/evn.html", icon: "logo-windows", closable: true },
+                            { label: "发布消息", name: "2-11", href: "pages/basic/settings/index.html", icon: "logo-apple", closable: true },
+                            { label: "职位管理", name: "2-12", href: "pages/basic/settings/evn.html", icon: "logo-windows", closable: true },
+                            { label: "系数管理", name: "2-13", href: "pages/basic/settings/index.html", icon: "logo-apple", closable: true },
+                            { label: "系统环境", name: "2-14", href: "pages/basic/settings/evn.html", icon: "logo-windows", closable: true }
                         ]
                     },
                     {
@@ -184,15 +197,22 @@
                 window.removeEventListener('resize', this.handleResize)
             },
             mounted() {
-                this.calcFrameHeight();
+                this.init();
                 window.addEventListener('resize', this.handleResize);
                 this.handleMenuClick({ label: "首页", name: "1-0", href: "./pages/default.html", icon: "md-home", closable: false });
 
             },
             methods: {
+                init: function () {
+                    this.calcFrameHeight();
+                    this.calcSiderMenuHeight();
+                },
                 calcFrameHeight: function () {
                     this.windowHeight = (document.documentElement.scrollHeight || document.body.scrollHeight);
                     this.frameHeight = this.windowHeight - 95;
+                },
+                calcSiderMenuHeight: function () {
+                    this.menuState.height = this.windowHeight - 50;
                 },
                 setCurrentTab: function (name) {
                     var tab = this.getTab(name);
@@ -246,6 +266,7 @@
                 },
                 handleResize: function () {
                     this.calcFrameHeight();
+                    this.calcSiderMenuHeight();
                 },
                 handleTabDropdownClick: function (name) {
                     switch (name) {
